@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -20,51 +21,51 @@ namespace ejercicioTelegrama
         private void btnCalcularPrecio_Click(object sender, EventArgs e)
         {
             string textoTelegrama;
-            char tipoTelegrama = ' ';
-            double coste;
+            double coste = 0;
             textoTelegrama = txtTelegrama.Text;
 
             char[] delimitadores = new char[]{' ', '\r', '\n'};
             int numPalabras = textoTelegrama.Split(delimitadores, StringSplitOptions.RemoveEmptyEntries).Length;
 
-           
-            // telegrama urgente? 
-            if (chkUrgente.Checked)
+            if (!rbUrgente.Checked && !rbOrdinario.Checked)
             {
-                tipoTelegrama = 'u';
-            }
+                MessageBox.Show("Por favor, indique si el telegrama es Ordinario o Urgente"); 
 
-            //Si el telegrama es ordinario 
-            if (tipoTelegrama != 'u')
-            {
-                if (numPalabras <= 10)
-                {
-                    coste = 2.5;
-                }
-                else
-                {
-                    coste = 2.5 + 0.5 * (numPalabras - 10);
-                }
             }
             else
-            //Si el telegrama es urgente 
             {
-                if (tipoTelegrama == 'u')
+                if (rbOrdinario.Checked)
                 {
-                    if (numPalabras <= 10)
+                    if (numPalabras <= 10 && numPalabras > 0)
+                    {
+                        coste = 2.5;
+                    }
+                    else if (numPalabras > 10)
+                    {
+                        coste = 2.5 + 0.5 * (numPalabras - 10);
+                    }
+                    else if (numPalabras == 0)
+                    {
+                        MessageBox.Show("Por favor, escriba el texto a enviar");
+                    }
+                }
+                else if (rbUrgente.Checked)
+                {
+                    if (numPalabras <= 10 && numPalabras > 0)
                     {
                         coste = 5;
                     }
-                    else
+                    else if (numPalabras > 10)
                     {
                         coste = 5 + 0.75 * (numPalabras - 10);
                     }
-                }
-                else
-                {
-                    coste = 0;
+                    else if (numPalabras == 0)
+                    {
+                        MessageBox.Show("Por favor, escriba el texto a enviar");
+                    }
                 }
             }
+            
             txtPrecio.Text = coste.ToString() + " euros";
         }
     }
